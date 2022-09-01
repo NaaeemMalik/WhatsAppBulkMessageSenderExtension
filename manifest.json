@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "WhatsApp Bulk Message Sender Extension",
+  "version": "1.0",
+
+  "action": {
+    "default_title": "Click Me",
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/"],
+      "js": ["wa.js"]
+    }
+  ],
+  "permissions": ["tabs", "storage", "activeTab", "cookies"],
+  "host_permissions": ["<all_urls>"]
+}
