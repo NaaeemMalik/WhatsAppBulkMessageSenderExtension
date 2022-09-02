@@ -52,9 +52,8 @@ function upload_image(image) {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(request);
-        if (request.type === "image") {
+        if (request.do === "send") {
             upload_image(request.image)
-        } else if (request.type === "text") {
             send_text(request.text)
         }
     }

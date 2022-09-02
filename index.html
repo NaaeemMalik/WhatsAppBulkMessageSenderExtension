@@ -1,38 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>WA</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 
-<body style="width: 400px; height: 400px;">
-    <div class="form-group">
-        <label for="text1">Msg Text</label>
-        <input type="text" class="form-control" name="" id="text1" placeholder="Text Message">
+<body>
+    <div class="title">
+        <h1>WhatsBulk</h1>
+        <div class="title-img">
+            <img src="goodonetick.png" alt="">
+        </div>
+
     </div>
-    <div class="form-group">
-        <label for="img1">Select File</label>
-        <input type="file" class="form-control-file" name="" id="img1" placeholder="">
+    <div id="first">
+        <p>Numbers <strong>(1)</strong></p>
+        <input id="firstInput" placeholder="username.password.date.phone" type="text">
+    </div>
+    <div id="second">
+        <div class="msg-icon">
+            <div class="msg-img"><img src="goodmsgicon.png" alt=""></div>
+            <h3>Msg Text</h3>
+        </div>
+
+
+        <fieldset>
+            <textarea>Download VLC
+            username[username] and password:[password]
+        </textarea>
+            <br>
+            <input style="width:30px;" multiple type="file">A</input>
+            <br>
+            <label name="file">Choose a file</label>
+            <div class="unique">
+                <input type="checkbox" id="caption" name="cap" value="caption">
+                <label for="caption"><span>caption</span></label>
+            </div>
+
+        </fieldset>
+        <div class="sendMsg">
+            <input type="checkbox" id="send" name="capt" value="caption">
+            <label for="send">
+                <h3 style="display:inline;">Send This Message</h3>
+            </label>
+
+        </div>
+    </div>
+    <div id="third">
+
+        <div class="msg-icon">
+            <div class="msg-img"><img src="goodmsgicon.png" alt=""></div>
+            <h3>Msg Text</h3>
+        </div>
+
+        <fieldset>
+            <textarea>Download VLC
+            username[username] and password:[password]
+        </textarea>
+            <br>
+            <input style="width:30px;" multiple type="file">A</b>
+            <br>
+            <label name="file">Choose a file</label>
+
+            <div class="unique">
+                <input type="checkbox" id="caption" name="cap" value="caption">
+                <label for="caption"><span>caption</span></label>
+            </div>
+
+        </fieldset>
+        <div class="sendMsg">
+            <input type="checkbox" id="sendMsg" name="cap" value="caption">
+            <label for="sendMsg">
+                <h3 style="display:inline;">Send This Message</h3>
+            </label>
+
+        </div>
+
+
+    </div>
+    <div class="container-last">
+        <p style="display:inline ;
+         font-size:12px;
+         font-weight:bold;
+         margin-right: 10px;">Random delay between</p>
+        <input id="randomMin" type="number" class="box1">
+        <input id="randomMax" type="number" class="box2">
     </div>
     <button id="btn">Send</button>
-    <button id="btni">Send Image</button>
 
 
-    <script src="lib/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="lib/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="lib/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
     <script src="index.js"></script>
 </body>
 

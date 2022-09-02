@@ -1,0 +1,90 @@
+body{
+    font-size :10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+fieldset {
+    position:relative;
+    min-height: 2.8rem;
+    margin: 0;
+    padding: 10px;
+}
+
+h1{
+    color:rgb(42, 145, 78);
+    display: inline;
+    padding-top:0;
+
+}
+.unique{
+    position: absolute;
+    background-color: rgb(255, 255, 255);
+    display: inline;
+    
+}
+
+.sendMsg{
+    margin-top: 1rem;
+}
+.title{
+    display: flex;
+    
+}
+.title-img{
+    padding-top: 10px;
+    padding-left: 3px;
+}
+
+.msg-icon{
+    display: flex;
+}
+.msg-img{
+    padding-top: 5px;
+    padding-left:0;
+}
+.box1{
+    
+    border: 1.5px solid rgb(42, 145, 78) ;
+    display: inline;
+    padding: 2px;
+}
+.box2{
+    
+    border: 1.5px solid rgb(42, 145, 78) ;
+    display: inline;
+    padding: 2px;
+}
+
+.container-last{
+    padding-top:20px;
+    padding-right:100px;
+
+}
+button{
+    border-style: none;
+    margin-top: 3rem;
+    margin-left: 10px;
+    color: white;
+    background-color: rgb(42, 145, 78);
+    padding: 5px;
+    width: 16rem;
+    
+}
+#sendMsg{
+    color:rgb(42, 145, 78);
+}
+#firstInput{
+    margin-right:3px;
+    width: 209px;
+    height: 33px;
+    margin-right: ;
+    padding-top:5px;
+    padding-bottom:40px;
+    padding-left:10px;
+    padding-right:37px;
+}
+input[type=checkbox] {
+  accent-color:green;
+}
