@@ -15,27 +15,35 @@
         <div class="title-img">
             <img src="goodonetick.png" alt="">
         </div>
-
     </div>
+
+
     <div id="first">
-        <p>Numbers <strong>(1)</strong></p>
+        <p id="number">Numbers <strong>(1)</strong></p>
         <input id="firstInput" placeholder="username.password.date.phone" type="text">
     </div>
+
+
     <div id="second">
         <div class="msg-icon">
             <div class="msg-img"><img src="goodmsgicon.png" alt=""></div>
             <h3>Msg Text</h3>
         </div>
 
-
         <fieldset>
             <textarea>Download VLC
-            username[username] and password:[password]
+                username[username] and password:[password]
         </textarea>
             <br>
-            <input style="width:30px;" multiple type="file">A</input>
+            <div id="attach" class="image-upload">
+                <label for="file-input">
+                  <img src="fileAttachIcon2.png">
+                </label>
+              
+                <input id="file-input" type="file" />
+            </div>
             <br>
-            <label name="file">Choose a file</label>
+            <!-- <label name="file">choose a file</label> -->
             <div class="unique">
                 <input type="checkbox" id="caption" name="cap" value="caption">
                 <label for="caption"><span>caption</span></label>
@@ -58,13 +66,19 @@
         </div>
 
         <fieldset>
-            <textarea>Download VLC
-            username[username] and password:[password]
+            <textarea class="content">Download VLC
+                username[username] and password:[password]
         </textarea>
             <br>
-            <input style="width:30px;" multiple type="file">A</b>
+            <div id="attach" class="image-upload">
+                <label for="file-input">
+                  <img src="fileAttachIcon2.png">
+                </label>
+              
+                <input id="file-input" type="file" />
+            </div>
             <br>
-            <label name="file">Choose a file</label>
+            <!-- <label name="file">Choose a file</label> -->
 
             <div class="unique">
                 <input type="checkbox" id="caption" name="cap" value="caption">
