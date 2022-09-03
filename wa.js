@@ -10,14 +10,16 @@ function send_text(text) {
     const event2 = new ClipboardEvent('cut', {
         bubbles: true
     });
-    let el = document.getElementsByClassName("selectable-text copyable-text")
-    console.log(el.length)
-    el = el[el.length - 1]
-    el.dispatchEvent(event2)
-    el.dispatchEvent(event)
-    setTimeout(function () {
-        document.querySelectorAll('[data-icon="send"]')[0].click()
-    }, 1)
+    waitForElm('.selectable-text.copyable-text').then((el) => {
+        console.log(el.length)
+        el = el[el.length - 1]
+        el.dispatchEvent(event2)
+        el.dispatchEvent(event)
+        waitForElm('[data-icon="send"]').then((elSend) => {
+            elSend.click()
+        })
+
+    })
 }
 
 function upload_image(image) {
@@ -52,8 +54,8 @@ function upload_image(image) {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(request);
-        if (request.do === "send") {
-            upload_image(request.image)
+        if (request.do === "sendOne") {
+            //upload_image(request.image)
             send_text(request.text)
         }
     }

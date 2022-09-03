@@ -13,6 +13,9 @@
       "js": ["wa.js"]
     }
   ],
-  "permissions": ["tabs", "storage", "activeTab", "cookies"],
+  "background": {
+    "service_worker": "bg.js"
+  },
+  "permissions": ["tabs", "storage", "scripting", "activeTab", "cookies"],
   "host_permissions": ["<all_urls>"]
 }

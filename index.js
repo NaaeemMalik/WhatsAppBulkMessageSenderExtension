@@ -14,7 +14,7 @@ document.getElementById("btn").addEventListener("click", function () {
     });
 })
 
-
+//ttps://web.whatsapp.com/send?phone=923336508521&text&type=phone_number&app_absent=0
 
 //saving text field value to local storage
 document.getElementById("firstInput").addEventListener("keyup", function (e) {
@@ -22,6 +22,7 @@ document.getElementById("firstInput").addEventListener("keyup", function (e) {
 })
 let textarea = [...document.getElementsByTagName('textarea')];
 textarea.forEach((element, index) => {
+    if (index == 0) return;
     element.addEventListener("keyup", function (e) {
         let tmp = "textarea" + index
         tmp = { [tmp]: e.target.value }
@@ -47,7 +48,8 @@ let checkbox = [...document.querySelectorAll('input[type="checkbox"]')];
 checkbox.forEach((element, index) => {
     element.addEventListener("click", function (e) {
         let tmp = "checkbox" + index
-        tmp = { [tmp]: e.target.value }
+        tmp = { [tmp]: e.target.checked }
+        console.log(tmp);
         chrome.storage.local.set(tmp);
     })
 });
@@ -58,14 +60,17 @@ chrome.storage.local.get(null, function (data) {
     document.getElementById("firstInput").value = data.firstInput ? data.firstInput : "";
     textarea = [...document.getElementsByTagName('textarea')];
     textarea.forEach((element, index) => {
+        if (index == 0) return;
         element.value = data["textarea" + index] ? (data["textarea" + index]) : "";
     })
     image = [...document.querySelectorAll('input[type="file"]')];
     image.forEach((element, index) => {
-        element.nextElementSibling.nextElementSibling.innerText = data["image" + index] ? data["image" + index].length : "";
+        console.log("image" + index, data["image" + index]);
+        // element.nextElementSibling.nextElementSibling.innerText = data["image" + index] ? data["image" + index].length : "";
     })
     checkbox = [...document.querySelectorAll('input[type="checkbox"]')];
     checkbox.forEach((element, index) => {
+        console.log("checkbox" + index, data["checkbox" + index]);
         element.checked = data["checkbox" + index] ? (data["checkbox" + index]) : false;
     })
     data.randomMin ? randomMin = data.randomMin : chrome.storage.local.set({ randomMin: randomMin })
@@ -81,3 +86,5 @@ document.getElementById("randomMin").addEventListener("keyup", function (e) {
 document.getElementById("randomMax").addEventListener("keyup", function (e) {
     chrome.storage.local.set({ "randomMax": e.target.value });
 })
+
+
