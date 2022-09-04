@@ -91,10 +91,18 @@ textarea{
     display: none;
 }
 label[name="file"]{
+    width:14px;
+    height:14px;
     background-color: cadetblue;
-    position: fixed;
-    margin-top: -40px;
-    left: 50px;
+    position:absolute;
+    top:0.px;
+    background-color:  rgb(42, 145, 78);
+    color:white;
+    padding-left:7px;
+    padding-right:-2px;
+    padding-top:2px;
+    border-radius:60%;
+    
 }
 button{
     border-style: none;
@@ -123,13 +131,12 @@ button{
 }
 #attach{
     display: inline;
+    position: relative;
 }
 #number{
     margin-top: 0;
 }
-#btn{
-    
-}
+
 input[type=checkbox] {
   accent-color:green;
 }
