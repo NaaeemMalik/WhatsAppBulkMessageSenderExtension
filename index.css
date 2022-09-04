@@ -90,6 +90,12 @@ textarea{
 .image-upload>input {
     display: none;
 }
+label[name="file"]{
+    background-color: cadetblue;
+    position: fixed;
+    margin-top: -40px;
+    left: 50px;
+}
 button{
     border-style: none;
     margin-top: 3rem;
