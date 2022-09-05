@@ -28,14 +28,17 @@ textarea.forEach((element, index) => {
 //saving image textfileds to local storage
 let image = [...document.querySelectorAll('input[type="file"]')];
 image.forEach((element, index) => {
+    element.setAttribute("idc", "image" + index)
     element.addEventListener("change", function (e) {
-        let tmp = "image" + index
+        let tmp = e.currentTarget.getAttribute("idc")
+        console.log(e.currentTarget);
         let blobURL = []
-        console.log("selected ", e.target.files.length);
+        console.log("selected ", tmp, e.target.files.length);
         for (let i = 0; i < e.target.files.length; i++) {
             blobURL.push(window.URL.createObjectURL(e.target.files[i]))
         }
         tmp = { [tmp]: blobURL }
+        console.log("saving ", tmp);
         chrome.storage.local.set(tmp);
     })
 });
@@ -59,10 +62,10 @@ chrome.storage.local.get(null, function (data) {
         if (index == 0) return;
         element.value = data["textarea" + index] ? (data["textarea" + index]) : "";
     })
-    image = [...document.querySelectorAll('input[type="file"]')];
+    image = [...document.querySelectorAll('label[name="file"]')];
     image.forEach((element, index) => {
         console.log("image" + index, data["image" + index]);
-        // element.nextElementSibling.nextElementSibling.innerText = data["image" + index] ? data["image" + index].length : "";
+        element.innerText = data["image" + index] ? data["image" + index].length : "0";
     })
     checkbox = [...document.querySelectorAll('input[type="checkbox"]')];
     checkbox.forEach((element, index) => {
