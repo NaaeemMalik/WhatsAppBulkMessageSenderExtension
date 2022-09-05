@@ -7,17 +7,18 @@ function send_text(text) {
         clipboardData: dataTransfer,
         bubbles: true
     });
-    const event2 = new ClipboardEvent('cut', {
-        bubbles: true
-    });
+    //console.log("waiting for textbox to appear");
     waitForElm('.selectable-text.copyable-text').then((el) => {
-        console.log(el.length)
+        //console.log("el length = ", el);
+        if (el.length < 2) {
+            setTimeout(() => {
+                send_text(text)
+            }, 10);
+            return;
+        }
+        console.log("textfields length ", el.length)
         el = el[el.length - 1]
-        el.dispatchEvent(event2)
         el.dispatchEvent(event)
-        waitForElm('[data-icon="send"]').then((elSend) => {
-            elSend.click()
-        })
 
     })
 }
@@ -71,6 +72,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
 })
 chrome.storage.local.get(null, function (data) {
+    console.log(data, "data2");
     if (data.stage == "redirected") {
         setTimeout(() => {
             console.log(data);
@@ -84,20 +86,38 @@ chrome.storage.local.get(null, function (data) {
                 // upload_image(image)
             }
 
-            chrome.storage.local.set({ stage: "sent", activete: false })
+            click_send()
         }, 1000);
 
     }
 })
+function click_send() {
+    console.log("waiting to clicking send");
+    waitForElm('[data-icon="send"]').then((elSend) => {
+        console.log("elSend length = ", elSend, elSend[0]);
+        if (elSend[0] === undefined) {
+            setTimeout(() => {
+                click_send()
+            }, 10);
+            return;
+        }
+        if (elSend[0].click()) {
+            chrome.storage.local.set({ stage: "sent", activete: false })
+        } else
+            setTimeout(() => {
+                click_send()
+            }, 10);
+    })
+}
 function waitForElm(selector) {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
+            return resolve(document.querySelectorAll(selector));
         }
 
         const observer = new MutationObserver(mutations => {
-            if (document.querySelector(selector)) {
-                resolve(document.querySelector(selector));
+            if (document.querySelectorAll(selector)) {
+                resolve(document.querySelectorAll(selector));
                 observer.disconnect();
             }
         });
