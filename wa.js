@@ -51,18 +51,44 @@ function upload_image(image) {
     });
 }
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        console.log(request);
-        if (request.do === "sendOne") {
-            alert(request.cred)
-            //upload_image(request.image)
-            // send_text(request.cred)
+let activete = false
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+    for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+        console.log(`Storage key "${key}" in namespace "${namespace}" changed. Old value was "${oldValue}", new value is "${newValue}".`);
+        if (key == "sendOne" && location.href.includes("https://web.whatsapp.com")) {
+            activete = true;
+            chrome.storage.local.set({ activete: true })
+
+            chrome.storage.local.get(null, function (data) {
+                console.log(data, "data");
+                if (data.stage == "redirecting") {
+                    chrome.storage.local.set({ stage: "redirected" })
+                    location.href = data.url
+                }
+            })
         }
+
     }
-);
+})
+chrome.storage.local.get(null, function (data) {
+    if (data.stage == "redirected") {
+        setTimeout(() => {
+            console.log(data);
+            let text = data.text;
+            let image = data.image;
+            let caption = data.caption;
+            if (text != "") {
+                send_text(text)
+            }
+            if (image != "") {
+                // upload_image(image)
+            }
 
+            chrome.storage.local.set({ stage: "sent", activete: false })
+        }, 1000);
 
+    }
+})
 function waitForElm(selector) {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
