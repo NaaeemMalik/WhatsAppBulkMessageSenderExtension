@@ -4,17 +4,13 @@ chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
 
 //send message to content script
 document.getElementById("btn").addEventListener("click", function () {
+    console.log("btn clicked");
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        chrome.storage.local.get(null, function (data) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                "do": "send",
-                "data": data
-            });
-        });
+        chrome.storage.local.set({ send: [Math.random(239895)] })
     });
 })
 
-//ttps://web.whatsapp.com/send?phone=923336508521&text&type=phone_number&app_absent=0
+//https://web.whatsapp.com/send?phone=923336508521&text&type=phone_number&app_absent=0
 
 //saving text field value to local storage
 document.getElementById("firstInput").addEventListener("keyup", function (e) {

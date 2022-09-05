@@ -55,8 +55,9 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(request);
         if (request.do === "sendOne") {
+            alert(request.cred)
             //upload_image(request.image)
-            send_text(request.text)
+            // send_text(request.cred)
         }
     }
 );
