@@ -19,6 +19,6 @@
   "background": {
     "service_worker": "bg.js"
   },
-  "permissions": ["tabs", "storage", "scripting", "activeTab", "cookies"],
+  "permissions": ["tabs", "storage", "scripting", "activeTab"],
   "host_permissions": ["<all_urls>"]
 }

@@ -19,7 +19,7 @@ function send_text(text) {
         console.log("textfields length ", el.length)
         el = el[el.length - 1]
         el.dispatchEvent(event)
-
+        click_send()
     })
 }
 
@@ -86,11 +86,11 @@ chrome.storage.local.get(null, function (data) {
                 // upload_image(image)
             }
 
-            click_send()
         }, 1000);
 
     }
 })
+
 function click_send() {
     console.log("waiting to clicking send");
     waitForElm('[data-icon="send"]').then((elSend) => {
@@ -101,8 +101,11 @@ function click_send() {
             }, 10);
             return;
         }
-        if (elSend[0].click()) {
-            chrome.storage.local.set({ stage: "sent", activete: false })
+        if (elSend[0] !== undefined) {
+            setTimeout(() => {
+                elSend[0].click()
+                chrome.storage.local.set({ stage: "sent", activete: false })
+            }, 100);
         } else
             setTimeout(() => {
                 click_send()
