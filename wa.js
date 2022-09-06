@@ -1,6 +1,6 @@
 console.log("wa.js loaded");
 
-function send_text(text) {
+function send_text(text, wait) {
     const dataTransfer = new DataTransfer();
     dataTransfer.setData('text', text);
     const event = new ClipboardEvent('paste', {
@@ -12,26 +12,37 @@ function send_text(text) {
         //console.log("el length = ", el);
         if (el.length < 2) {
             setTimeout(() => {
-                send_text(text)
+                send_text(text, wait)
             }, 10);
             return;
         }
         console.log("textfields length ", el.length)
         el = el[el.length - 1]
         el.dispatchEvent(event)
-        click_send()
+
+        console.log("wait ", wait);
+        if (!wait) click_send()
     })
 }
 
 function upload_image(image) {
     waitForElm('[data-icon=clip]').then((elm) => {
-        elm.click()
+        if (elm[0] === undefined) {
+            console.log("waiting for clip icon undefined");
+            setTimeout(() => {
+                upload_image(image)
+            }, 10);
+            return;
+        }
+        elm[0].click()
+        console.log("sending image request");
         var xhr = new XMLHttpRequest();
         xhr.open("GET", image);
-
         xhr.responseType = "blob";
-        xhr.onload = function () {
+        xhr.onload = function (e) {
+            console.log("image loaded", e);
             if (xhr.status === 200) {
+                console.log("wait for image upload button");
                 waitForElm('[type=file]').then((input) => {
                     const dT = new ClipboardEvent('').clipboardData || new DataTransfer(); // specs 
                     dT.items.add(new File([xhr.response], "test.jpg", { type: "image/jpeg" }));
@@ -41,13 +52,23 @@ function upload_image(image) {
                         'cancelable': false,
                     });
                     input.dispatchEvent(evt);
-                    waitForElm('[data-icon="send"]').then((btn2) => {
-                        btn2.click()
-                    })
+
                 })
             }
-        };
+
+        }
+        xhr.onloadend = (event) => {
+            console.log("xhr.onloadend", event, xhr.status, xhr.statusText, xhr.readyState, xhr);
+            if (event.loaded && xhr.response) {
+                //   resolve(xhr.response);
+            } else {
+                console.log("error", event)
+                click_send()
+
+            }
+        }
         xhr.send();
+
 
     });
 }
@@ -74,19 +95,17 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 chrome.storage.local.get(null, function (data) {
     console.log(data, "data2");
     if (data.stage == "redirected") {
-        setTimeout(() => {
-            console.log(data);
-            let text = data.text;
-            let image = data.image;
-            let caption = data.caption;
-            if (text != "") {
-                send_text(text)
-            }
-            if (image != "") {
-                // upload_image(image)
-            }
-
-        }, 1000);
+        console.log(data);
+        let text = data.text;
+        let image = data.image;
+        let wait = data.caption;
+        console.log("img ", image, " wait ", wait);
+        if (text != "") {
+            send_text(text, wait)
+        }
+        if (image) {
+            upload_image(image)
+        }
 
     }
 })

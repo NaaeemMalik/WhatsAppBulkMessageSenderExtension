@@ -19,25 +19,26 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
                     let password = textArray[outerLoop].split(",")[1];
                     let date = textArray[outerLoop].split(",")[2];
                     let number = textArray[outerLoop].split(",")[3];
-                    let textarea1 = replaceAll(data.textarea1, "[username]", username);
-                    textarea1 = replaceAll(textarea1, "[password]", password);
-                    textarea1 = replaceAll(textarea1, "[date]", date);
-                    let textarea2 = replaceAll(data.textarea2, "[username]", username);
-                    textarea2 = replaceAll(textarea2, "[password]", password);
-                    textarea2 = replaceAll(textarea2, "[date]", date);
-                    console.log(textarea1);
-                    console.log(textarea2);
+                    let innerLoop = 0
+
+                    let textareai = replaceAll(data["textarea" + (innerLoop + 1)], "[username]", username);
+                    textareai = replaceAll(textareai, "[password]", password);
+                    textareai = replaceAll(textareai, "[date]", date);
+                    console.log(textareai);
+
                     chrome.storage.local.set({
-                        "sendOne": [Math.random(239895)],
+                        "sendOne": Math.random(239895),
                         "url": "https://web.whatsapp.com/send?phone=" + number + "&text&type=phone_number&app_absent=0",
-                        "text": textarea1,
-                        "caption": [data.checkbox1],
-                        "image": data.image1,
+                        "text": textareai,
+                        "caption": data["checkbox+innerLoop"],
+                        "image": data["image" + innerLoop],
                         "outerLoop": outerLoop,
+                        "innerLoop": innerLoop,
                         "stage": "redirecting"
                     });
 
                 }
+
             })
         }
 

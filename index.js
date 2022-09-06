@@ -8,7 +8,9 @@ function storeLooks() {
     document.getElementById("btn").addEventListener("click", function () {
         console.log("btn clicked");
         chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-            chrome.storage.local.set({ send: [Math.random(239895)] })
+            let tmp = { send: Math.random(239895) }
+            console.log(tmp);
+            chrome.storage.local.set(tmp)
         });
     })
 
