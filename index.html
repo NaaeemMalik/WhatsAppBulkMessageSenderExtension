@@ -24,7 +24,7 @@
     </div>
 
 
-    <div id="second">
+    <div name="templete">
         <div class="msg-icon">
             <div class="msg-img"><img src="goodmsgicon.png" alt=""></div>
             <h3>Msg Text</h3>
@@ -59,13 +59,14 @@
 
         </div>
     </div>
-   
-   <div class="funcButton">
-    <button id="add"><img src="addButtonIcon.png" alt=""></button>
-    <button id="more"><img src="addMoreButtonIcon.png" alt=""></button>
-   </div>
-    <input id="quantity" type="number">
-    <button id="show" onclick="complete()">Create</button>
+
+    <div class="funcButton">
+        <button id="createOne"><img src="addButtonIcon.png" alt=""></button>
+        <button id="createMore"><img src="addMoreButtonIcon.png" alt=""></button>
+    </div>
+
+    <input id="quantity" style="display: none" type="number">
+    <button id="createMul" style="display: none">Create</button>
 
 
     <div class="container-last">
@@ -78,7 +79,7 @@
     </div>
     <button id="btn">Send</button>
 
-
+    <script src="restoreLooks.js"></script>
     <script src="index.js"></script>
 </body>
 

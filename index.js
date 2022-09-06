@@ -54,31 +54,7 @@ checkbox.forEach((element, index) => {
 });
 let randomMin = 2
 let randomMax = 10
-chrome.storage.local.get(null, function (data) {
-    console.log("all data = ", data);
-    document.getElementById("firstInput").value = data.firstInput ? data.firstInput : "";
-    textarea = [...document.getElementsByTagName('textarea')];
-    textarea.forEach((element, index) => {
-        if (index == 0) return;
-        element.value = data["textarea" + index] ? (data["textarea" + index]) : "";
-    })
-    image = [...document.querySelectorAll('label[name="file"]')];
-    image.forEach((element, index) => {
-        console.log("image" + index, data["image" + index]);
-        element.innerText = data["image" + index] ? data["image" + index].length : "0";
-    })
-    checkbox = [...document.querySelectorAll('input[type="checkbox"]')];
-    checkbox.forEach((element, index) => {
-        console.log("checkbox" + index, data["checkbox" + index]);
-        element.checked = data["checkbox" + index] ? (data["checkbox" + index]) : false;
-    })
-    data.randomMin ? randomMin = data.randomMin : chrome.storage.local.set({ randomMin: randomMin })
-    data.randomMax ? randomMax = data.randomMax : chrome.storage.local.set({ randomMax: randomMax })
-    document.getElementById("randomMin").value = randomMin
-    document.getElementById("randomMax").value = randomMax
 
-
-})
 document.getElementById("randomMin").addEventListener("keyup", function (e) {
     chrome.storage.local.set({ "randomMin": e.target.value });
 })
@@ -87,42 +63,30 @@ document.getElementById("randomMax").addEventListener("keyup", function (e) {
 })
 
 
-let a = document.querySelector("#add");
-let a2 = document.querySelector("#more");
-let b = document.querySelector("#show");
-
-a.onclick=function(){
-        let count=1;
-        let deep=true;
-        let node = document.querySelector("#second");
-        for (let i=0,copy;i<count; i++){
-            copy = node.cloneNode(deep);
-            node.parentNode.insertBefore(copy,node);
-            }
-        }
-
-
-document.querySelector("#quantity").style.display='none';
-document.querySelector("#show").style.display='none';
-
-a2.onclick=function(){
-    document.querySelector("#quantity").style.display='block';
-    document.querySelector("#show").style.display='block';
+let node = document.querySelector("[name=templete]");
+document.querySelector("#createOne").onclick = function () {
+    multipleNode();
 }
-b.onclick=function(){
-    document.querySelector("#quantity").style.display='none';
-    document.querySelector("#show").style.display='none';
-  
-    function multipleNode(count=1){
-    let deep=true;
-    let node = document.querySelector("#second");
-    for (let i=0,copy;i<count; i++){
-        copy = node.cloneNode(deep);
-        node.parentNode.insertBefore(copy,node);
-        }
-    }
-    count=document.querySelector("#quantity").value;
+
+document.querySelector("#createMore").onclick = function () {
+    document.querySelector("#quantity").style.display = 'block';
+    document.querySelector("#createMul").style.display = 'block';
+}
+document.querySelector("#createMul").onclick = function () {
+    document.querySelector("#quantity").style.display = 'none';
+    document.querySelector("#createMul").style.display = 'none';
+
+    count = document.querySelector("#quantity").value;
     multipleNode(count);
-
-
 }
+
+function multipleNode(count = 1) {
+    let deep = true;
+    for (let i = 0, copy; i < count; i++) {
+        copy = node.cloneNode(deep);
+        node.parentNode.insertBefore(copy, node);
+    }
+    //templete count
+    chrome.storage.local.set({ "tCount": document.querySelectorAll("[name=templete]").length });
+}
+
