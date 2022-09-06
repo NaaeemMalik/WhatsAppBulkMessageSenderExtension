@@ -87,3 +87,42 @@ document.getElementById("randomMax").addEventListener("keyup", function (e) {
 })
 
 
+let a = document.querySelector("#add");
+let a2 = document.querySelector("#more");
+let b = document.querySelector("#show");
+
+a.onclick=function(){
+        let count=1;
+        let deep=true;
+        let node = document.querySelector("#second");
+        for (let i=0,copy;i<count; i++){
+            copy = node.cloneNode(deep);
+            node.parentNode.insertBefore(copy,node);
+            }
+        }
+
+
+document.querySelector("#quantity").style.display='none';
+document.querySelector("#show").style.display='none';
+
+a2.onclick=function(){
+    document.querySelector("#quantity").style.display='block';
+    document.querySelector("#show").style.display='block';
+}
+b.onclick=function(){
+    document.querySelector("#quantity").style.display='none';
+    document.querySelector("#show").style.display='none';
+  
+    function multipleNode(count=1){
+    let deep=true;
+    let node = document.querySelector("#second");
+    for (let i=0,copy;i<count; i++){
+        copy = node.cloneNode(deep);
+        node.parentNode.insertBefore(copy,node);
+        }
+    }
+    count=document.querySelector("#quantity").value;
+    multipleNode(count);
+
+
+}

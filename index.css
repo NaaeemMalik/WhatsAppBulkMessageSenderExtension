@@ -93,6 +93,9 @@ textarea{
 .image-upload>input {
     display: none;
 }
+.funcButton{
+    position: relative;
+}
 label[name="file"]{
     position: absolute;
     width:14px;
@@ -106,7 +109,7 @@ label[name="file"]{
     border-radius:50%;
     
 }
-button{
+#btn{
     border-style: none;
     margin-top: 3rem;
     color: white;
@@ -140,6 +143,28 @@ button{
 }
 #number{
     margin-top: 0;
+}
+
+#add{
+    padding: 0;
+    border: 0;
+    margin-top:20px;
+    margin-right:50px ;
+}
+#more{
+    position: absolute;
+    border: transparent;
+    border-radius: 50%;
+    top: 30px;
+    left:45px;
+}
+#show{
+    border: transparent;
+    border-radius:3px;
+    margin-top: 10px;
+    padding: 5px;
+    background-color:rgb(42, 145, 78) ;
+    color: white;
 }
 
 input[type=checkbox] {
