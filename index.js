@@ -81,6 +81,9 @@ function storeLooks() {
         count = document.querySelector("#quantity").value;
         multipleNode(count);
     }
+    document.querySelector("#deleteButton").onclick = function () {
+        document.querySelector("[name=templete]").style.display = 'none';
+    }
 
 
 

@@ -39,12 +39,12 @@ textarea{
     position: absolute;
     background-color: rgb(255, 255, 255);
     display: inline;
-    top: 99px;
+    top: 109px;
     left:15px;
-    padding-top: 0;
-    padding-bottom: 7px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-bottom-left-radius:50%;
+    border-bottom-right-radius:50%;
 
 }
 
@@ -61,6 +61,7 @@ textarea{
 }
 
 .msg-icon{
+    position:relative;
     display: flex;
 }
 .msg-img{
@@ -145,27 +146,35 @@ label[name="file"]{
     margin-top: 0;
 }
 
-#add{
+#createOne{
     padding: 0;
     border: 0;
+    border-radius:60%;
     margin-top:20px;
     margin-right:50px ;
 }
-#more{
+#createMore{
     position: absolute;
     border: transparent;
-    border-radius: 50%;
+    border-radius: 80%;
     top: 30px;
     left:45px;
 }
-#show{
+#createMul{
     border: transparent;
     border-radius:3px;
     margin-top: 10px;
-    padding: 5px;
-    background-color:rgb(42, 145, 78) ;
-    color: white;
 }
+#deleteButton{
+    position:absolute;
+    top: 23px;
+    left: 245px;
+    padding: 0;
+    border: transparent;
+
+}
+
+
 
 input[type=checkbox] {
   accent-color:green;
