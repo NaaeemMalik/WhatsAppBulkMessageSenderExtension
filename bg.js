@@ -30,7 +30,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
                         "sendOne": Math.random(239895),
                         "url": "https://web.whatsapp.com/send?phone=" + number + "&text&type=phone_number&app_absent=0",
                         "text": textareai,
-                        "caption": data["checkbox+innerLoop"],
+                        "caption": data["checkbox" + innerLoop],
                         "image": data["image" + innerLoop],
                         "outerLoop": outerLoop,
                         "innerLoop": innerLoop,

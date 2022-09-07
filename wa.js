@@ -10,7 +10,7 @@ function send_text(text, wait) {
     //console.log("waiting for textbox to appear");
     waitForElm('.selectable-text.copyable-text').then((el) => {
         //console.log("el length = ", el);
-        if (el.length < 2) {
+        if (el.length < 2 || sending) {
             setTimeout(() => {
                 send_text(text, wait)
             }, 10);
@@ -20,14 +20,14 @@ function send_text(text, wait) {
         el = el[el.length - 1]
         el.dispatchEvent(event)
 
-        console.log("wait ", wait);
+        console.log("wait ", !wait, "clcking send");
         if (!wait) click_send()
     })
 }
 
 function upload_image(image) {
     waitForElm('[data-icon=clip]').then((elm) => {
-        if (elm[0] === undefined) {
+        if (elm[0] === undefined || sending) {
             console.log("waiting for clip icon undefined");
             setTimeout(() => {
                 upload_image(image)
@@ -46,12 +46,17 @@ function upload_image(image) {
                 waitForElm('[type=file]').then((input) => {
                     const dT = new ClipboardEvent('').clipboardData || new DataTransfer(); // specs 
                     dT.items.add(new File([xhr.response], "test.jpg", { type: "image/jpeg" }));
-                    input.files = dT.files;
+                    input[0].files = dT.files;
                     var evt = new Event('change', {
                         'bubbles': true,
                         'cancelable': false,
                     });
-                    input.dispatchEvent(evt);
+
+                    input[0].dispatchEvent(evt);
+                    setTimeout(() => {
+                        console.log("wait for send image button");
+                        click_send()
+                    }, 1000);
 
                 })
             }
@@ -74,6 +79,7 @@ function upload_image(image) {
 }
 
 let activete = false
+let sending = false
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         console.log(`Storage key "${key}" in namespace "${namespace}" changed. Old value was "${oldValue}", new value is "${newValue}".`);
@@ -111,7 +117,8 @@ chrome.storage.local.get(null, function (data) {
 })
 
 function click_send() {
-    console.log("waiting to clicking send");
+    sending = true
+    console.log("click_send() waiting to clicking send");
     waitForElm('[data-icon="send"]').then((elSend) => {
         console.log("elSend length = ", elSend, elSend[0]);
         if (elSend[0] === undefined) {
@@ -122,8 +129,10 @@ function click_send() {
         }
         if (elSend[0] !== undefined) {
             setTimeout(() => {
+                console.log("sent clicked", elSend[0]);
                 elSend[0].click()
                 chrome.storage.local.set({ stage: "sent", activete: false })
+                sending = false
             }, 100);
         } else
             setTimeout(() => {
