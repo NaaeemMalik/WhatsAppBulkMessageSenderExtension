@@ -38,7 +38,7 @@ function storeLooks() {
             let tmp = e.currentTarget.getAttribute("idc")
             console.log(e.currentTarget);
             let blobURL = []
-            console.log("selected ", tmp, e.target.files.length);
+            console.log("selected image ", tmp, e.target.files.length);
             for (let i = 0; i < e.target.files.length; i++) {
                 blobURL.push(window.URL.createObjectURL(e.target.files[i]))
             }

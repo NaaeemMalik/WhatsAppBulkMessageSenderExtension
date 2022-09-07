@@ -4,13 +4,23 @@ let randomMax = 10
 
 let node = document.querySelector("[name=templete]");
 function multipleNode(count = 1) {
-    let deep = true;
     for (let i = 0, copy; i < count; i++) {
-        copy = node.cloneNode(deep);
+        copy = node.cloneNode(true);
         node.parentNode.insertBefore(copy, node);
     }
     //templete count
     chrome.storage.local.set({ "tCount": document.querySelectorAll("[name=templete]").length });
+
+    setTimeout(() => {
+        let labels = document.querySelectorAll("#file-input2")
+        for (let i = 0; i < labels.length; i++) {
+            let rnd = Math.random(36592836);
+            document.querySelector("#file-input").setAttribute("id", rnd)
+            labels[i].setAttribute("for", rnd)
+            labels[i].setAttribute("id", "for" + rnd)
+        }
+    }, 100);
+
 }
 
 
