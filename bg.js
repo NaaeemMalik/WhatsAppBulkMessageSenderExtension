@@ -17,6 +17,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 
 
+let captionNum = 0
 manageAllNumbers = () => {
     console.log("manageAllNumbers", outerLoop);
     chrome.storage.local.get(null, function (data) {
@@ -39,13 +40,21 @@ manageAllNumbers = () => {
                 "stage": "redirecting",
                 "outerLoop": outerLoop
             }
+            //if()
             for (innerLoop = 0; innerLoop < data.tCount; innerLoop++) {
+                let caption = data["checkbox" + (captionNum)]
+                console.log("captions", caption, captionNum);
+                captionNum++;
+                let sendIt = data["checkbox" + (captionNum)]
+                console.log("sendIt", sendIt, captionNum);
+                captionNum++;
                 let textareai = replaceAll(data["textarea" + (innerLoop + 1)], "[username]", username);
                 textareai = replaceAll(textareai, "[password]", password);
                 textareai = replaceAll(textareai, "[date]", date);
                 tmp["dotext" + innerLoop] = textareai ? textareai : "";
                 tmp["docaption" + innerLoop] = data["checkbox" + innerLoop] ? data["checkbox" + innerLoop] : false;
                 tmp["doimage" + innerLoop] = data["image" + innerLoop] ? data["image" + innerLoop] : null;
+                tmp["dosend" + innerLoop] = sendIt;
             }
             chrome.storage.local.set(tmp);
 

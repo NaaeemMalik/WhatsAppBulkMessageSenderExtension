@@ -22,6 +22,7 @@ function send_text(text, wait) {
 
         console.log("wait ", !wait, "clcking send");
         if (!wait) click_send()
+
     })
 }
 
@@ -84,7 +85,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             chrome.storage.local.set({ activete: true })
 
             chrome.storage.local.get(null, function (data) {
-                console.log(data, "data");
+                console.log(data, "data", data.url);
                 if (data.stage == "redirecting") {
                     chrome.storage.local.set({ stage: "redirected" })
                     location.href = data.url
@@ -102,49 +103,65 @@ chrome.storage.local.get(null, function (data) {
     }
 })
 recursiveSendAllTemplates = (data, i) => {
-    let text = data["dotext" + i];
-    let image = data["doimage" + i];
-    let wait = data["docaption" + i];
-    console.log("text", text, "img ", image, " wait ", wait);
-    if (text != "") {
-        send_text(text, wait)
+    console.log("sending it ", data["dosend" + i], i, data.tCount, i < data.tCount)
+    if (!data["dosend" + i]) {
+        recursiveSendAllTemplates(data, i + 1)
+        return
     }
-    if (image) {
-        console.log("uploading image", image);
-        for (let i = 0; i < image.length; i++)
-            upload_image(image[i])
+    if (i < data.tCount) return;
 
-    }
-    if (i < data.tCount - 1) {
-        setTimeout(() => {
-            recursiveSendAllTemplates(data, i + 1)
-        }, 1000);
-    } else {
-        chrome.storage.local.set({ stage: "sent", activete: false })
-    }
+    setTimeout(() => {
+        let text = data["dotext" + i];
+        let image = data["doimage" + i];
+        let wait = data["docaption" + i];
+        console.log("text", text, "img ", image, " wait ", wait);
+        if (text != "") {
+            send_text(text, wait)
+        }
+        if (image) {
+            console.log("uploading image", image);
+            for (let i = 0; i < image.length; i++)
+                upload_image(image[i])
+
+        }
+        if (i < data.tCount - 1) {
+            setTimeout(() => {
+                recursiveSendAllTemplates(data, i + 1)
+            }, 1000);
+        } else {
+            console.warn("stopped stange from being sent for 5 seconds");
+            setTimeout(() => {
+                chrome.storage.local.set({ stage: "sent", activete: false })
+            }, 5000);
+        }
+    }, 500);
+
 }
 function click_send() {
     sending = true
     console.log("click_send() waiting to clicking send");
-    waitForElm('[data-icon="send"]').then((elSend) => {
-        console.log("elSend length = ", elSend, elSend[0]);
-        if (elSend[0] === undefined) {
-            setTimeout(() => {
-                click_send()
-            }, 10);
-            return;
-        }
-        if (elSend[0] !== undefined) {
-            setTimeout(() => {
-                console.log("sent clicked", elSend[0]);
-                elSend[0].click()
-                sending = false
-            }, 100);
-        } else
-            setTimeout(() => {
-                click_send()
-            }, 10);
-    })
+    setTimeout(() => {
+        waitForElm('[data-icon="send"]').then((elSend) => {
+            console.log("elSend length = ", elSend, elSend[0]);
+            if (elSend[0] === undefined) {
+                setTimeout(() => {
+                    click_send()
+                }, 10);
+                return;
+            }
+            if (elSend[0] !== undefined) {
+                setTimeout(() => {
+                    console.log("sent clicked", elSend[0]);
+                    elSend[0].click()
+                    sending = false
+                }, 100);
+            } else
+                setTimeout(() => {
+                    click_send()
+                }, 10);
+        })
+    }, 500);
+
 }
 function waitForElm(selector) {
     return new Promise(resolve => {
