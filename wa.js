@@ -1,15 +1,17 @@
 console.log("wa.js loaded");
 
-function send_text(text, wait) {
+function send_text(text, wait = false) {
     const dataTransfer = new DataTransfer();
     dataTransfer.setData('text', text);
     const event = new ClipboardEvent('paste', {
         clipboardData: dataTransfer,
         bubbles: true
     });
+    let selector = '.selectable-text.copyable-text'
+    if (wait) selector = '[data-testid="media-caption-input-container"]'
     //console.log("waiting for textbox to appear");
-    waitForElm('.selectable-text.copyable-text').then((el) => {
-        //console.log("el length = ", el);
+    waitForElm(selector).then((el) => {
+        // console.log("text el length = ", el);
         if (el.length < 2 || sending) {
             setTimeout(() => {
                 send_text(text, wait)
@@ -20,19 +22,22 @@ function send_text(text, wait) {
         el = el[el.length - 1]
         el.dispatchEvent(event)
 
-        console.log("wait ", !wait, "clcking send");
-        if (!wait) click_send()
+        sending = true
+        console.log("wait for send image button");
+        setTimeout(() => {
+            click_send()
+        }, 500);
 
     })
 }
 
-function upload_image(image) {
+function upload_image(image, wait = false) {
     waitForElm('[data-icon=clip]').then((elm) => {
         if (elm[0] === undefined || sending) {
             console.log("waiting for clip icon undefined");
             setTimeout(() => {
                 upload_image(image)
-            }, 10);
+            }, 100);
             return;
         }
         elm[0].click()
@@ -54,11 +59,13 @@ function upload_image(image) {
                     });
 
                     input[0].dispatchEvent(evt);
-                    sending = true
-                    setTimeout(() => {
-                        console.log("wait for send image button");
-                        click_send()
-                    }, 1000);
+                    if (wait) {
+                        sending = true
+                        setTimeout(() => {
+                            console.log("wait for send image button");
+                            click_send()
+                        }, 1000);
+                    }
                 })
             }
         }
@@ -67,7 +74,8 @@ function upload_image(image) {
             if (event.loaded && xhr.response) {
                 //   resolve(xhr.response);
             } else {
-                console.log("error", event)
+                console.log("image error", event)
+                try { document.querySelector('[data-icon="send"]').click() } catch (e) { console.log("image error2 ", e) }
                 click_send()
             }
         }
@@ -103,36 +111,50 @@ chrome.storage.local.get(null, function (data) {
     }
 })
 recursiveSendAllTemplates = (data, i) => {
-    console.log("sending it ", data["dosend" + i], i, data.tCount, i < data.tCount)
-    if (!data["dosend" + i]) {
-        recursiveSendAllTemplates(data, i + 1)
+    console.log("sending it ", data["dosend" + i], i, data.tCount, i >= data.tCount)
+    if (i >= data.tCount) return;
+    if (data["dosend" + i] !== true) {
+        setTimeout(() => {
+            recursiveSendAllTemplates(data, i + 1)
+        }, 100);
         return
     }
-    if (i < data.tCount) return;
+    console.log("passed if");
 
     setTimeout(() => {
         let text = data["dotext" + i];
         let image = data["doimage" + i];
         let wait = data["docaption" + i];
         console.log("text", text, "img ", image, " wait ", wait);
-        if (text != "") {
+        if (wait) {
+            console.log('%c sending with caption! ', 'background: #eee; color: #aaa');
+            upload_image(image[0], wait)
             send_text(text, wait)
-        }
-        if (image) {
-            console.log("uploading image", image);
-            for (let i = 0; i < image.length; i++)
-                upload_image(image[i])
+            for (let ii = 1; ii < image.length; ii++)
+                upload_image(image[ii])
 
+        } else {
+            console.log('%c sending WITHOUT caption! ', 'background: #fff; color: #aaa');
+            if (text != "") {
+                send_text(text)
+            }
+            if (image) {
+                console.log("uploading image", image);
+                for (let ii = 0; ii < image.length; ii++)
+                    upload_image(image[ii])
+            }
         }
+        console.warn("sending next template ", i, data.tCount);
         if (i < data.tCount - 1) {
             setTimeout(() => {
                 recursiveSendAllTemplates(data, i + 1)
             }, 1000);
         } else {
-            console.warn("stopped stange from being sent for 5 seconds");
+            console.warn("stopped stage from being sent for 5 seconds");
             setTimeout(() => {
+                click_send()
                 chrome.storage.local.set({ stage: "sent", activete: false })
-            }, 5000);
+            }, 3000);
         }
     }, 500);
 
