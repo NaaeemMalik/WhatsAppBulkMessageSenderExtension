@@ -26,7 +26,7 @@ function send_text(text, wait = false) {
         console.log("wait for send image button");
         setTimeout(() => {
             click_send()
-        }, 500);
+        }, 1000);
 
     })
 }
@@ -41,7 +41,14 @@ function upload_image(image, wait = false) {
             return;
         }
         elm[0].click()
-        console.log("sending image request");
+
+        image = b64toBlob(
+            image.replace('data:image/png;base64,', ''),
+            'image/png',
+            512
+        );
+
+        console.log("sending image request", image);
         var xhr = new XMLHttpRequest();
         xhr.open("GET", image);
         xhr.responseType = "blob";
@@ -153,7 +160,10 @@ recursiveSendAllTemplates = (data, i) => {
             console.warn("stopped stage from being sent for 5 seconds");
             setTimeout(() => {
                 click_send()
-                chrome.storage.local.set({ stage: "sent", activete: false })
+                setTimeout(() => {
+                    alert("done sending all templates")
+                    chrome.storage.local.set({ stage: "sent", activete: false })
+                }, 3000);
             }, 3000);
         }
     }, 500);
@@ -204,3 +214,22 @@ function waitForElm(selector) {
         });
     });
 }
+const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+};

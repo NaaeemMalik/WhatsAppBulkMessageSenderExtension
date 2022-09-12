@@ -1,9 +1,18 @@
+function getBase64(file, callback, tmp) {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        console.log(reader.result);
+        callback(reader.result, tmp);
+    };
+    reader.onerror = function (error) {
+        console.log('image base64 Error: ', error);
+    };
+}
 function storeLooks() {
-
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
         chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, files: ['wa.js'] })
     });
-
     //send message to content script
     document.getElementById("btn").addEventListener("click", function () {
         console.log("btn clicked");
@@ -37,14 +46,16 @@ function storeLooks() {
         element.addEventListener("change", function (e) {
             let tmp = e.currentTarget.getAttribute("idc")
             console.log(e.currentTarget);
-            let blobURL = []
+            let baseURLs = []
             console.log("selected image ", tmp, e.target.files.length);
             for (let i = 0; i < e.target.files.length; i++) {
-                blobURL.push(window.URL.createObjectURL(e.target.files[i]))
+                baseURLs.push(getBase64(e.target.files[i], function (result, tmp) {
+                    console.log(result);
+                    tmp = { [tmp]: result }
+                    console.log("saving ", tmp);
+                    chrome.storage.local.set(tmp);
+                }, tmp))
             }
-            tmp = { [tmp]: blobURL }
-            console.log("saving ", tmp);
-            chrome.storage.local.set(tmp);
         })
     });
 
