@@ -43,8 +43,8 @@ function upload_image(image, wait = false) {
         elm[0].click()
 
         image = b64toBlob(
-            image.replace('data:image/png;base64,', ''),
-            'image/png',
+            image.replace('data:image/jpeg;base64,', ''),
+            'image/jpeg',
             512
         );
 
@@ -231,5 +231,5 @@ const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
     }
 
     const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
+    return window.URL.createObjectURL(blob)
 };
