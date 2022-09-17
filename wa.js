@@ -8,18 +8,21 @@ function send_text(text, wait = false) {
         bubbles: true
     });
     let selector = '.selectable-text.copyable-text'
-    if (wait) selector = '[data-testid="media-caption-input-container"]'
+    let textEXPECTEDLENGTH = 2
+    if (!wait) { textEXPECTEDLENGTH = 0; selector = '[data-testid="media-caption-input-container"]' }
     //console.log("waiting for textbox to appear");
     waitForElm(selector).then((el) => {
-        // console.log("text el length = ", el);
-        if (el.length < 2 || sending) {
+        console.log("text element found ", sending, waitforimageforcaptiontext);
+        if (el.length < textEXPECTEDLENGTH || sending || waitforimageforcaptiontext) {
             setTimeout(() => {
                 send_text(text, wait)
             }, 10);
             return;
         }
+        alert("picked textbox element " + selector)
         console.log("textfields length ", el.length)
         el = el[el.length - 1]
+        //writing text in text field
         el.dispatchEvent(event)
 
         sending = true
@@ -30,8 +33,10 @@ function send_text(text, wait = false) {
 
     })
 }
-
+let waitforimageforcaptiontext = false
 function upload_image(image, wait = false) {
+    waitforimageforcaptiontext = !wait
+    alert("waitforimageforcaptiontext" + waitforimageforcaptiontext)
     waitForElm('[data-icon=clip]').then((elm) => {
         if (elm[0] === undefined || sending) {
             console.log("waiting for clip icon undefined");
@@ -40,6 +45,7 @@ function upload_image(image, wait = false) {
             }, 100);
             return;
         }
+        console.log("clip icon found and clicked");
         elm[0].click()
 
         image = b64toBlob(
@@ -66,7 +72,12 @@ function upload_image(image, wait = false) {
                     });
 
                     input[0].dispatchEvent(evt);
+                    console.log("image uploaded");
+                    console.log("wait is ", wait, waitforimageforcaptiontext);
+                    waitforimageforcaptiontext = false
+                    alert("waitforimageforcaptiontext became false");
                     if (wait) {
+                        alert("about to send only image message not caption");
                         sending = true
                         setTimeout(() => {
                             console.log("wait for send image button");
@@ -77,7 +88,7 @@ function upload_image(image, wait = false) {
             }
         }
         xhr.onloadend = (event) => {
-            console.log("xhr.onloadend", event, xhr.status, xhr.statusText, xhr.readyState, xhr);
+            console.log("xhr.onloadend, wait=", wait);
             if (event.loaded && xhr.response) {
                 //   resolve(xhr.response);
             } else {
@@ -119,29 +130,35 @@ chrome.storage.local.get(null, function (data) {
 })
 recursiveSendAllTemplates = (data, i) => {
     console.log("sending it ", data["dosend" + i], i, data.tCount, i >= data.tCount)
-    if (i >= data.tCount) return;
+    if (data["dosend" + i] === undefined) {
+        alert("looks like all templates are sent", i, data.tCount)
+        return
+    }
     if (data["dosend" + i] !== true) {
+        alert("not sending templete " + data["dosend" + i] + i + data.tCount);
         setTimeout(() => {
             recursiveSendAllTemplates(data, i + 1)
         }, 100);
         return
     }
-    console.log("passed if");
+    console.log("passed dosend if ", i);
 
     setTimeout(() => {
+        let waitForTempleteToBeSent = true
         let text = data["dotext" + i];
         let image = data["doimage" + i];
         let wait = data["docaption" + i];
         console.log("text", text, "img ", image, " wait ", wait);
-        if (wait) {
-            console.log('%c sending with caption! ', 'background: #eee; color: #aaa');
+        if (!wait) {
+            alert('%c sending with caption! ' + i);
             upload_image(image[0], wait)
             send_text(text, wait)
+
             for (let ii = 1; ii < image.length; ii++)
                 upload_image(image[ii])
 
         } else {
-            console.log('%c sending WITHOUT caption! ', 'background: #fff; color: #aaa');
+            alert('%c sending WITHOUT caption! ' + i);
             if (text != "") {
                 send_text(text)
             }
@@ -151,21 +168,32 @@ recursiveSendAllTemplates = (data, i) => {
                     upload_image(image[ii])
             }
         }
-        console.warn("sending next template ", i, data.tCount);
-        if (i < data.tCount - 1) {
-            setTimeout(() => {
-                recursiveSendAllTemplates(data, i + 1)
-            }, 1000);
-        } else {
-            console.warn("stopped stage from being sent for 5 seconds");
-            setTimeout(() => {
-                click_send()
-                setTimeout(() => {
-                    alert("done sending all templates")
-                    chrome.storage.local.set({ stage: "sent", activete: false })
-                }, 3000);
-            }, 3000);
-        }
+        setInterval(() => {
+            if (waitForTempleteToBeSent === false) {
+                alert("sending next template " + i + data.tCount);
+                if (i < data.tCount) {
+                    alert("tCount is lesser the i yet i=" + i + " tcount=" + data.tCount)
+                    setTimeout(() => {
+                        recursiveSendAllTemplates(data, i + 1)
+                    }, 1000);
+                } else {
+                    alert("tCount is equal to i", i, data.tCount)
+                    console.warn("stopped stage from being sent for 5 seconds");
+                    setTimeout(() => {
+                        console.log("last sent click");
+                        click_send()
+                        setTimeout(() => {
+                            console.log("moving to next number");
+                            alert("done sending all templates")
+                            chrome.storage.local.set({ stage: "sent", activete: false })
+                        }, 3000);
+                    }, 3000);
+                }
+            }
+        }, 1000);
+
+
+
     }, 500);
 
 }
@@ -186,6 +214,7 @@ function click_send() {
                     console.log("sent clicked", elSend[0]);
                     elSend[0].click()
                     sending = false
+                    waitForTempleteToBeSent = false
                 }, 100);
             } else
                 setTimeout(() => {
