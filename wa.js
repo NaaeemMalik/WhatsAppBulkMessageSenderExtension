@@ -12,7 +12,7 @@ function send_text(text, wait = false) {
     if (!wait) { textEXPECTEDLENGTH = 0; selector = '[data-testid="media-caption-input-container"]' }
     //console.log("waiting for textbox to appear");
     waitForElm(selector).then((el) => {
-        console.log("text element found ", sending, waitforimageforcaptiontext);
+        console.log("text element found ", el.length, textEXPECTEDLENGTH, el.length < textEXPECTEDLENGTH, sending, waitforimageforcaptiontext);
         if (el.length < textEXPECTEDLENGTH || sending || waitforimageforcaptiontext) {
             setTimeout(() => {
                 send_text(text, wait)
@@ -74,31 +74,33 @@ function upload_image(image, wait = false) {
                     input[0].dispatchEvent(evt);
                     console.log("image uploaded");
                     console.log("wait is ", wait, waitforimageforcaptiontext);
-                    waitforimageforcaptiontext = false
+                    alert("about to send only image message not caption");
+                    sending = true
                     alert("waitforimageforcaptiontext became false");
-                    if (wait) {
-                        alert("about to send only image message not caption");
-                        sending = true
-                        setTimeout(() => {
+                    setTimeout(() => {
+                        alert("waitforimageforcaptiontext became false");
+                        waitforimageforcaptiontext = false
+                        if (wait) {
                             console.log("wait for send image button");
                             click_send()
-                        }, 1000);
-                    }
+                        }
+                    }, 1000);
+
                 })
             }
-        }
-        xhr.onloadend = (event) => {
-            console.log("xhr.onloadend, wait=", wait);
-            if (event.loaded && xhr.response) {
-                //   resolve(xhr.response);
-            } else {
-                console.log("image error", event)
-                try { document.querySelector('[data-icon="send"]').click() } catch (e) { console.log("image error2 ", e) }
-                click_send()
+            xhr.onloadend = (event) => {
+                console.log("xhr.onloadend, wait=", wait);
+                if (event.loaded && xhr.response) {
+                    //   resolve(xhr.response);
+                } else {
+                    console.log("image error", event)
+                    try { document.querySelector('[data-icon="send"]').click() } catch (e) { console.log("image error2 ", e) }
+                    click_send()
+                }
             }
         }
         xhr.send();
-    });
+    })
 }
 
 let activete = false
