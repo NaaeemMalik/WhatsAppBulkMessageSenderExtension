@@ -1,6 +1,7 @@
 console.log("wa.js loaded");
 
-function send_text(text, wait = false) {
+function send_text(text, wait = false, templeteLastItem = false) {
+    console.log("sending text", templeteLastItem);
     const dataTransfer = new DataTransfer();
     dataTransfer.setData('text', text);
     const event = new ClipboardEvent('paste', {
@@ -15,7 +16,7 @@ function send_text(text, wait = false) {
         console.log("text element found ", el.length, textEXPECTEDLENGTH, el.length < textEXPECTEDLENGTH, sending, waitforimageforcaptiontext);
         if (el.length < textEXPECTEDLENGTH || sending || waitforimageforcaptiontext) {
             setTimeout(() => {
-                send_text(text, wait)
+                send_text(text, wait, templeteLastItem)
             }, 10);
             return;
         }
@@ -28,20 +29,21 @@ function send_text(text, wait = false) {
         sending = true
         console.log("wait for send image button");
         setTimeout(() => {
-            click_send()
+            alert("click_send send with " + templeteLastItem)
+            click_send(templeteLastItem)
         }, 1000);
 
     })
 }
 let waitforimageforcaptiontext = false
-function upload_image(image, wait = false) {
+function upload_image(image, wait = false, templeteLastItem = false) {
     waitforimageforcaptiontext = !wait
     alert("waitforimageforcaptiontext" + waitforimageforcaptiontext)
     waitForElm('[data-icon=clip]').then((elm) => {
         if (elm[0] === undefined || sending) {
             console.log("waiting for clip icon undefined");
             setTimeout(() => {
-                upload_image(image)
+                upload_image(image, wait, templeteLastItem)
             }, 100);
             return;
         }
@@ -74,13 +76,13 @@ function upload_image(image, wait = false) {
                     input[0].dispatchEvent(evt);
                     console.log("image uploaded");
                     console.log("wait is ", wait, waitforimageforcaptiontext);
-                    alert("about to send only image message not caption");
-                    sending = true
-                    alert("waitforimageforcaptiontext became false");
+
                     setTimeout(() => {
                         alert("waitforimageforcaptiontext became false");
                         waitforimageforcaptiontext = false
                         if (wait) {
+                            sending = true
+                            alert("about to send only image message not caption");
                             console.log("wait for send image button");
                             click_send()
                         }
@@ -130,6 +132,7 @@ chrome.storage.local.get(null, function (data) {
         recursiveSendAllTemplates(data, 0)
     }
 })
+let waitForTempleteToBeSent = true
 recursiveSendAllTemplates = (data, i) => {
     console.log("sending it ", data["dosend" + i], i, data.tCount, i >= data.tCount)
     if (data["dosend" + i] === undefined) {
@@ -146,19 +149,21 @@ recursiveSendAllTemplates = (data, i) => {
     console.log("passed dosend if ", i);
 
     setTimeout(() => {
-        let waitForTempleteToBeSent = true
+        waitForTempleteToBeSent = true
         let text = data["dotext" + i];
         let image = data["doimage" + i];
         let wait = data["docaption" + i];
         console.log("text", text, "img ", image, " wait ", wait);
         if (!wait) {
-            alert('%c sending with caption! ' + i);
+            alert('%c sending with caption! ' + i + image.length + (image.length == 1));
             upload_image(image[0], wait)
-            send_text(text, wait)
+            console.log("send_text111", text, wait, image.length == 1);
+            send_text(text, wait, image.length == 1)
 
-            for (let ii = 1; ii < image.length; ii++)
-                upload_image(image[ii])
-
+            for (let ii = 1; ii < image.length; ii++) {
+                alert("sent caption one, now sending remaing without caption " + ii + image.length + (ii == image.length - 1));
+                upload_image(image[ii], false, ii == image.length - 1)
+            }
         } else {
             alert('%c sending WITHOUT caption! ' + i);
             if (text != "") {
@@ -171,6 +176,7 @@ recursiveSendAllTemplates = (data, i) => {
             }
         }
         setInterval(() => {
+            console.log("checking if next template can be sent ", i, data.tCount, waitForTempleteToBeSent);
             if (waitForTempleteToBeSent === false) {
                 alert("sending next template " + i + data.tCount);
                 if (i < data.tCount) {
@@ -199,7 +205,7 @@ recursiveSendAllTemplates = (data, i) => {
     }, 500);
 
 }
-function click_send() {
+function click_send(templeteLastItem = false) {
     sending = true
     console.log("click_send() waiting to clicking send");
     setTimeout(() => {
@@ -216,7 +222,10 @@ function click_send() {
                     console.log("sent clicked", elSend[0]);
                     elSend[0].click()
                     sending = false
-                    waitForTempleteToBeSent = false
+                    if (templeteLastItem) {
+                        alert("templeteLastItem");
+                        waitForTempleteToBeSent = false
+                    }
                 }, 100);
             } else
                 setTimeout(() => {
