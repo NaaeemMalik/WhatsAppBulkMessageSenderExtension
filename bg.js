@@ -9,7 +9,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
         if (key == "send") {
             manageAllNumbers()
         } else if (key == "stage" && newValue == "sent") {
+            console.log("stage changed to sent");
             outerLoop++;
+            console.log("outerLoop", outerLoop);
             manageAllNumbers()
         }
 
@@ -43,10 +45,10 @@ manageAllNumbers = () => {
             //if()
             for (innerLoop = 0; innerLoop < data.tCount; innerLoop++) {
                 let caption = data["checkbox" + (captionNum)]
-                console.log("captions", caption, captionNum);
+                console.log("caption", captionNum, caption);
                 captionNum++;
                 let sendIt = data["checkbox" + (captionNum)]
-                console.log("sendIt", sendIt, captionNum);
+                console.log("sendIt", captionNum, sendIt);
                 captionNum++;
                 console.log("accessing textarea ", innerLoop);
                 let textareai
@@ -56,10 +58,11 @@ manageAllNumbers = () => {
                     textareai = replaceAll(textareai, "[date]", date);
                 }
                 tmp["dotext" + innerLoop] = textareai ? textareai : "";
-                tmp["docaption" + innerLoop] = data["checkbox" + innerLoop] ? data["checkbox" + innerLoop] : false;
+                tmp["docaption" + innerLoop] = caption ? caption : false;
                 tmp["doimage" + innerLoop] = data["image" + innerLoop] ? data["image" + innerLoop] : null;
                 tmp["dosend" + innerLoop] = sendIt;
             }
+            console.log("tmp sent msg ", tmp);
             chrome.storage.local.set(tmp);
 
         }

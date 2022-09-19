@@ -20,7 +20,7 @@ function send_text(text, wait = false, templeteLastItem = false) {
             }, 10);
             return;
         }
-        alert("picked textbox element " + selector)
+        alert("picked textbox element " + selector + wait)
         console.log("textfields length ", el.length)
         el = el[el.length - 1]
         //writing text in text field
@@ -110,6 +110,10 @@ let sending = false
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         console.log(`Storage key "${key}" in namespace "${namespace}" changed. Old value was "${oldValue}", new value is "${newValue}".`);
+        if (key === "url") {
+            console.log("url changed, reloading");
+            location.href = newValue
+        }
         if (key == "sendOne" && location.href.includes("https://web.whatsapp.com")) {
             activete = true;
             chrome.storage.local.set({ activete: true })
@@ -134,12 +138,16 @@ chrome.storage.local.get(null, function (data) {
 })
 let waitForTempleteToBeSent = true
 recursiveSendAllTemplates = (data, i) => {
-    console.log("sending it ", data["dosend" + i], i, data.tCount, i >= data.tCount)
+    let thisIsSent = false
+    console.log("recursiveSendAllTemplates sending it ", data["dosend" + i], i, data.tCount, i >= data.tCount)
     if (data["dosend" + i] === undefined) {
+        thisIsSent = true
         alert("looks like all templates are sent", i, data.tCount)
+        chrome.storage.local.set({ stage: "sent", activete: false })
         return
     }
     if (data["dosend" + i] !== true) {
+        thisIsSent = true
         alert("not sending templete " + data["dosend" + i] + i + data.tCount);
         setTimeout(() => {
             recursiveSendAllTemplates(data, i + 1)
@@ -153,29 +161,34 @@ recursiveSendAllTemplates = (data, i) => {
         let text = data["dotext" + i];
         let image = data["doimage" + i];
         let wait = data["docaption" + i];
-        console.log("text", text, "img ", image, " wait ", wait);
-        if (!wait && image) {
-            alert('%c sending with caption! ' + i + image.length + (image.length == 1));
-            upload_image(image[0], wait)
-            console.log("send_text111", text, wait, image.length == 1);
-            send_text(text, wait, image.length == 1)
-
-            for (let ii = 1; ii < image.length; ii++) {
-                alert("sent caption one, now sending remaing without caption " + ii + image.length + (ii == image.length - 1));
-                upload_image(image[ii], false, ii == image.length - 1)
+        console.log("text", text, "img ", image, " wait ", wait, thisIsSent);
+        if (!thisIsSent)
+            if (wait && image) {
+                alert('%c sending with caption! ' + i + image.length + (image.length == 1));
+                upload_image(image[0], wait)
+                console.log("send_text111", text, wait, image.length == 1);
+                send_text(text, wait, image.length == 1)
+                // if (image.length == 1) thisIsSent = true
+                for (let ii = 1; ii < image.length; ii++) {
+                    alert("sent caption one, now sending remaing without caption " + ii + image.length + (ii == image.length - 1));
+                    upload_image(image[ii], false, ii == image.length - 1)
+                    // if (ii == image.length - 1) thisIsSent = true
+                }
+            } else {
+                alert('%c sending WITHOUT caption! ' + i);
+                if (text != "") {
+                    send_text(text, wait, !image)
+                    //if (!image) thisIsSent = true
+                }
+                if (image) {
+                    console.log("uploading image", image);
+                    for (let ii = 0; ii < image.length; ii++) {
+                        upload_image(image[ii])
+                        // if (ii == image.length - 1) thisIsSent = true
+                    }
+                }
             }
-        } else {
-            alert('%c sending WITHOUT caption! ' + i);
-            if (text != "") {
-                send_text(text)
-            }
-            if (image) {
-                console.log("uploading image", image);
-                for (let ii = 0; ii < image.length; ii++)
-                    upload_image(image[ii])
-            }
-        }
-        setInterval(() => {
+        let myinterval = setInterval(() => {
             console.log("checking if next template can be sent ", i, data.tCount, waitForTempleteToBeSent);
             if (waitForTempleteToBeSent === false) {
                 alert("sending next template " + i + data.tCount);
@@ -183,6 +196,7 @@ recursiveSendAllTemplates = (data, i) => {
                     alert("tCount is lesser the i yet i=" + i + " tcount=" + data.tCount)
                     setTimeout(() => {
                         recursiveSendAllTemplates(data, i + 1)
+                        clearInterval(myinterval)
                     }, 1000);
                 } else {
                     alert("tCount is equal to i", i, data.tCount)
@@ -194,6 +208,7 @@ recursiveSendAllTemplates = (data, i) => {
                             console.log("moving to next number");
                             alert("done sending all templates")
                             chrome.storage.local.set({ stage: "sent", activete: false })
+                            clearInterval(myinterval)
                         }, 3000);
                     }, 3000);
                 }
@@ -201,13 +216,12 @@ recursiveSendAllTemplates = (data, i) => {
         }, 1000);
 
 
-
     }, 500);
 
 }
 function click_send(templeteLastItem = false) {
     sending = true
-    console.log("click_send() waiting to clicking send");
+    console.log("click_send() waiting to clicking send", templeteLastItem);
     setTimeout(() => {
         waitForElm('[data-icon="send"]').then((elSend) => {
             console.log("elSend length = ", elSend, elSend[0]);
@@ -223,7 +237,7 @@ function click_send(templeteLastItem = false) {
                     elSend[0].click()
                     sending = false
                     if (templeteLastItem) {
-                        alert("templeteLastItem");
+                        alert("templeteLastItem, waitForTempleteToBeSent = false now");
                         waitForTempleteToBeSent = false
                     }
                 }, 100);
@@ -273,3 +287,6 @@ const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
     const blob = new Blob(byteArrays, { type: contentType });
     return window.URL.createObjectURL(blob)
 };
+window.onbeforeunload = function () {
+    // blank function do nothing
+}
