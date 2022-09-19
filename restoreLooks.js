@@ -38,8 +38,10 @@ chrome.storage.local.get(null, function (data) {
     })
     image = [...document.querySelectorAll('label[name="file"]')];
     image.forEach((element, index) => {
-        console.log("showing image count " + index, data["image" + index], data["image" + index].length);
-        element.innerText = data["image" + index] ? data["image" + index].length : "0";
+        if (data["image" + index]) {
+            console.log("showing image count " + index, data["image" + index], data["image" + index].length);
+            element.innerText = data["image" + index] ? data["image" + index].length : "0";
+        }
     })
     checkbox = [...document.querySelectorAll('input[type="checkbox"]')];
     checkbox.forEach((element, index) => {

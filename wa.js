@@ -1,7 +1,7 @@
 console.log("wa.js loaded");
 
 function send_text(text, wait = false, templeteLastItem = false) {
-    console.log("sending text", templeteLastItem);
+    console.log("sending text", templeteLastItem, wait);
     const dataTransfer = new DataTransfer();
     dataTransfer.setData('text', text);
     const event = new ClipboardEvent('paste', {
@@ -10,7 +10,7 @@ function send_text(text, wait = false, templeteLastItem = false) {
     });
     let selector = '.selectable-text.copyable-text'
     let textEXPECTEDLENGTH = 2
-    if (!wait) { textEXPECTEDLENGTH = 0; selector = '[data-testid="media-caption-input-container"]' }
+    if (wait) { textEXPECTEDLENGTH = 0; selector = '[data-testid="media-caption-input-container"]' }
     //console.log("waiting for textbox to appear");
     waitForElm(selector).then((el) => {
         console.log("text element found ", el.length, textEXPECTEDLENGTH, el.length < textEXPECTEDLENGTH, sending, waitforimageforcaptiontext);
@@ -154,7 +154,7 @@ recursiveSendAllTemplates = (data, i) => {
         let image = data["doimage" + i];
         let wait = data["docaption" + i];
         console.log("text", text, "img ", image, " wait ", wait);
-        if (!wait) {
+        if (!wait && image) {
             alert('%c sending with caption! ' + i + image.length + (image.length == 1));
             upload_image(image[0], wait)
             console.log("send_text111", text, wait, image.length == 1);
