@@ -3,6 +3,7 @@ function alert(text) {
     console.warn(text)
 }
 function send_text(text, wait = false, templeteLastItem = false) {
+    if (isLastItemOfLastTempleteSent) return
     console.log("sending text", templeteLastItem, wait);
     const dataTransfer = new DataTransfer();
     dataTransfer.setData('text', text);
@@ -40,6 +41,7 @@ function send_text(text, wait = false, templeteLastItem = false) {
 
 let waitforimageforcaptiontext = false
 function upload_image(image, wait = false, templeteLastItem = false) {
+    if (isLastItemOfLastTempleteSent) return
     waitforimageforcaptiontext = wait
     alert("waitforimageforcaptiontext" + waitforimageforcaptiontext)
     waitForElm('[data-icon=clip]').then((elm) => {
@@ -111,6 +113,7 @@ function upload_image(image, wait = false, templeteLastItem = false) {
 let activete = false
 let sending = false
 let isStageSent = false
+let isLastItemOfLastTempleteSent = false
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         console.log(`Storage key "${key}" in namespace "${namespace}" changed. Old value was "${oldValue}", new value is "${newValue}".`);
@@ -150,6 +153,7 @@ recursiveSendAllTemplates = (data, i) => {
         alert("looks like all templates are sent", i, data.tCount)
         if (!isStageSent)
             chrome.storage.local.set({ stage: "sent", activete: false })
+        isLastItemOfLastTempleteSent = true
         return
     }
     if (data["dosend" + i] !== true) {
@@ -213,6 +217,7 @@ recursiveSendAllTemplates = (data, i) => {
                         setTimeout(() => {
                             console.log("moving to next number");
                             alert("done sending all templates")
+                            isLastItemOfLastTempleteSent = true
                             if (!isStageSent)
                                 chrome.storage.local.set({ stage: "sent", activete: false })
                             clearInterval(myinterval)
@@ -227,6 +232,7 @@ recursiveSendAllTemplates = (data, i) => {
 
 }
 function click_send(templeteLastItem = false) {
+    if (isLastItemOfLastTempleteSent) return
     sending = true
     console.log("click_send() waiting to clicking send", templeteLastItem);
     setTimeout(() => {
@@ -241,6 +247,7 @@ function click_send(templeteLastItem = false) {
             if (elSend[0] !== undefined) {
                 setTimeout(() => {
                     console.log("sent clicked", elSend[0]);
+                    if (isLastItemOfLastTempleteSent) return
                     elSend[0].click()
                     sending = false
                     if (templeteLastItem) {
