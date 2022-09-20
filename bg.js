@@ -21,6 +21,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
 let captionNum = 0
 manageAllNumbers = () => {
+    captionNum = 0
     console.log("manageAllNumbers", outerLoop);
     chrome.storage.local.get(null, function (data) {
         console.log(data);

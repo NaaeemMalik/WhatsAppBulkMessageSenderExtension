@@ -1,5 +1,7 @@
 console.log("wa.js loaded");
-
+function alert(text) {
+    console.warn(text)
+}
 function send_text(text, wait = false, templeteLastItem = false) {
     console.log("sending text", templeteLastItem, wait);
     const dataTransfer = new DataTransfer();
@@ -35,9 +37,10 @@ function send_text(text, wait = false, templeteLastItem = false) {
 
     })
 }
+
 let waitforimageforcaptiontext = false
 function upload_image(image, wait = false, templeteLastItem = false) {
-    waitforimageforcaptiontext = !wait
+    waitforimageforcaptiontext = wait
     alert("waitforimageforcaptiontext" + waitforimageforcaptiontext)
     waitForElm('[data-icon=clip]').then((elm) => {
         if (elm[0] === undefined || sending) {
@@ -80,11 +83,11 @@ function upload_image(image, wait = false, templeteLastItem = false) {
                     setTimeout(() => {
                         alert("waitforimageforcaptiontext became false");
                         waitforimageforcaptiontext = false
-                        if (wait) {
+                        if (!wait) {
                             sending = true
-                            alert("about to send only image message not caption");
                             console.log("wait for send image button");
-                            click_send()
+                            alert("about to send only image message not caption");
+                            click_send(templeteLastItem)
                         }
                     }, 1000);
 
@@ -97,7 +100,7 @@ function upload_image(image, wait = false, templeteLastItem = false) {
                 } else {
                     console.log("image error", event)
                     try { document.querySelector('[data-icon="send"]').click() } catch (e) { console.log("image error2 ", e) }
-                    click_send()
+                    click_send(templeteLastItem)
                 }
             }
         }
@@ -107,6 +110,7 @@ function upload_image(image, wait = false, templeteLastItem = false) {
 
 let activete = false
 let sending = false
+let isStageSent = false
 chrome.storage.onChanged.addListener(function (changes, namespace) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         console.log(`Storage key "${key}" in namespace "${namespace}" changed. Old value was "${oldValue}", new value is "${newValue}".`);
@@ -114,6 +118,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             console.log("url changed, reloading");
             location.href = newValue
         }
+        if (key == "stage" && newValue == "sent") isStageSent = true
         if (key == "sendOne" && location.href.includes("https://web.whatsapp.com")) {
             activete = true;
             chrome.storage.local.set({ activete: true })
@@ -143,7 +148,8 @@ recursiveSendAllTemplates = (data, i) => {
     if (data["dosend" + i] === undefined) {
         thisIsSent = true
         alert("looks like all templates are sent", i, data.tCount)
-        chrome.storage.local.set({ stage: "sent", activete: false })
+        if (!isStageSent)
+            chrome.storage.local.set({ stage: "sent", activete: false })
         return
     }
     if (data["dosend" + i] !== true) {
@@ -183,7 +189,7 @@ recursiveSendAllTemplates = (data, i) => {
                 if (image) {
                     console.log("uploading image", image);
                     for (let ii = 0; ii < image.length; ii++) {
-                        upload_image(image[ii])
+                        upload_image(image[ii], false, ii == image.length - 1)
                         // if (ii == image.length - 1) thisIsSent = true
                     }
                 }
@@ -207,7 +213,8 @@ recursiveSendAllTemplates = (data, i) => {
                         setTimeout(() => {
                             console.log("moving to next number");
                             alert("done sending all templates")
-                            chrome.storage.local.set({ stage: "sent", activete: false })
+                            if (!isStageSent)
+                                chrome.storage.local.set({ stage: "sent", activete: false })
                             clearInterval(myinterval)
                         }, 3000);
                     }, 3000);
@@ -286,7 +293,7 @@ const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
 
     const blob = new Blob(byteArrays, { type: contentType });
     return window.URL.createObjectURL(blob)
-};
+}
 window.onbeforeunload = function () {
     // blank function do nothing
 }
