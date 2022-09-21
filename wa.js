@@ -27,14 +27,16 @@ function send_text(text, wait = false, templeteLastItem = false) {
         console.log("textfields length ", el.length)
         el = el[el.length - 1]
         //writing text in text field
-        el.dispatchEvent(event)
-
-        sending = true
-        console.log("wait for send image button");
-        setTimeout(() => {
-            alert("click_send send with " + templeteLastItem)
-            click_send(templeteLastItem)
-        }, 1000);
+        if (lastSentTextMessage !== text) {
+            el.dispatchEvent(event)
+            lastSentTextMessage = text
+            sending = true
+            console.log("wait for send image button");
+            setTimeout(() => {
+                alert("click_send send with " + templeteLastItem)
+                click_send(templeteLastItem)
+            }, 1000);
+        }
 
     })
 }
@@ -42,6 +44,7 @@ function send_text(text, wait = false, templeteLastItem = false) {
 let waitforimageforcaptiontext = false
 function upload_image(image, wait = false, templeteLastItem = false) {
     if (isLastItemOfLastTempleteSent) return
+    if (image == lastSentImageMessage) return
     waitforimageforcaptiontext = wait
     alert("waitforimageforcaptiontext" + waitforimageforcaptiontext)
     waitForElm('[data-icon=clip]').then((elm) => {
@@ -52,10 +55,11 @@ function upload_image(image, wait = false, templeteLastItem = false) {
             }, 100);
             return;
         }
+        if (image == lastSentImageMessage) return
         console.log("clip icon found and clicked");
         elm[0].click()
 
-        image = b64toBlob(
+        imageURL = b64toBlob(
             image.replace('data:image/jpeg;base64,', ''),
             'image/jpeg',
             512
@@ -63,36 +67,40 @@ function upload_image(image, wait = false, templeteLastItem = false) {
 
         console.log("sending image request", image);
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", image);
+        xhr.open("GET", imageURL);
         xhr.responseType = "blob";
         xhr.onload = function (e) {
             console.log("image loaded", e);
             if (xhr.status === 200) {
                 console.log("wait for image upload button");
+                if (image == lastSentImageMessage) return
                 waitForElm('[type=file]').then((input) => {
                     const dT = new ClipboardEvent('').clipboardData || new DataTransfer(); // specs 
                     dT.items.add(new File([xhr.response], "attachment.jpg", { type: "image/jpeg" }));
-                    input[0].files = dT.files;
-                    var evt = new Event('change', {
-                        'bubbles': true,
-                        'cancelable': false,
-                    });
+                    if (image != lastSentImageMessage) {
+                        input[0].files = dT.files;
+                        var evt = new Event('change', {
+                            'bubbles': true,
+                            'cancelable': false,
+                        });
+                        lastSentImageMessage = image
+                        console.log("last sent image is now ", lastSentImageMessage);
 
-                    input[0].dispatchEvent(evt);
-                    console.log("image uploaded");
-                    console.log("wait is ", wait, waitforimageforcaptiontext);
+                        input[0].dispatchEvent(evt);
+                        console.log("image uploaded");
+                        console.log("wait is ", wait, waitforimageforcaptiontext);
 
-                    setTimeout(() => {
-                        alert("waitforimageforcaptiontext became false");
-                        waitforimageforcaptiontext = false
-                        if (!wait) {
-                            sending = true
-                            console.log("wait for send image button");
-                            alert("about to send only image message not caption");
-                            click_send(templeteLastItem)
-                        }
-                    }, 1000);
-
+                        setTimeout(() => {
+                            alert("waitforimageforcaptiontext became false");
+                            waitforimageforcaptiontext = false
+                            if (!wait) {
+                                sending = true
+                                console.log("wait for send image button");
+                                alert("about to send only image message not caption");
+                                click_send(templeteLastItem)
+                            }
+                        }, 1000);
+                    }
                 })
             }
             xhr.onloadend = (event) => {
@@ -145,6 +153,8 @@ chrome.storage.local.get(null, function (data) {
     }
 })
 let waitForTempleteToBeSent = true
+let lastSentTextMessage = ""
+let lastSentImageMessage = ""
 recursiveSendAllTemplates = (data, i) => {
     let thisIsSent = false
     console.log("recursiveSendAllTemplates sending it ", data["dosend" + i], i, data.tCount, i >= data.tCount)

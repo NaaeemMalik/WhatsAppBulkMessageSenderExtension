@@ -82,6 +82,7 @@ function storeLooks() {
 
     document.querySelector("#createOne").onclick = function () {
         multipleNode();
+        location.reload();
     }
 
     document.querySelector("#createMore").onclick = function () {
@@ -94,6 +95,7 @@ function storeLooks() {
 
         count = document.querySelector("#quantity").value;
         multipleNode(count);
+        location.reload();
     }
     document.querySelector("#deleteButton").onclick = function () {
         document.querySelector("[name=templete]").style.display = 'none';

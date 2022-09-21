@@ -66,6 +66,6 @@ manageAllNumbers = () => {
             console.log("tmp sent msg ", tmp);
             chrome.storage.local.set(tmp);
 
-        }
+        } else outerLoop = 0
     })
 }
