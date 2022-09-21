@@ -58,13 +58,17 @@ function upload_image(image, wait = false, templeteLastItem = false) {
         if (image == lastSentImageMessage) return
         console.log("clip icon found and clicked");
         elm[0].click()
-
-        imageURL = b64toBlob(
-            image.replace('data:image/jpeg;base64,', ''),
-            'image/jpeg',
-            512
-        );
-
+        let imgTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/jpg', 'image/bmp']
+        let imageURL = ""
+        for (let j = 0; j < imgTypes.length; j++) {
+            let tmpstr = 'data:' + imgTypes[j] + ';base64,'
+            if (image.startsWith(tmpstr))
+                imageURL = b64toBlob(
+                    image.replace(tmpstr, ''),
+                    imgTypes[j],
+                    512
+                );
+        }
         console.log("sending image request", image);
         var xhr = new XMLHttpRequest();
         xhr.open("GET", imageURL);
