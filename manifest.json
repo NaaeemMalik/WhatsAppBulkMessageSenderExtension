@@ -1,12 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "WhatsApp Bulk Message Sender Extension",
+  "name": "WhatsAppBulk Message Free",
+  "description": "WhatsApp Bulk Message Sender Extension",
   "version": "1.0",
 
   "action": {
+    "default_icon": "logo128.png",
     "default_title": "WhatsApp Bulk Message Sender",
     "default_popup": "index.html"
   },
+  "icons": {
+    "128": "logo128.png"
+  },
+  "homepage_url": "https://softwareprince.com/?src=whatsapp-bulk-message-sender&page=manifest",
   "content_scripts": [
     {
       "matches": [
@@ -19,6 +25,6 @@
   "background": {
     "service_worker": "bg.js"
   },
-  "permissions": ["tabs", "storage", "scripting", "activeTab"],
+  "permissions": ["storage"],
   "host_permissions": ["https://web.whatsapp.com/*"]
 }

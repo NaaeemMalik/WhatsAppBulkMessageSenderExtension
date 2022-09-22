@@ -58,7 +58,8 @@ function upload_image(image, wait = false, templeteLastItem = false) {
         if (image == lastSentImageMessage) return
         console.log("clip icon found and clicked");
         elm[0].click()
-        let imgTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/jpg', 'image/bmp']
+        //detect image and video
+        let imgTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/jpg', 'image/bmp', 'image/tiff', 'image/svg+xml', 'image/x-icon', 'video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov', 'video/mpeg', 'video/3gp', 'video/3gpp', 'video/3gpp2', 'video/3g2', 'video/wmv', 'video/flv', 'video/avi', 'video/mkv', 'video/m4v', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv', 'video/x-flv', 'video/x-matroska', 'video/x-m4v', 'video/x-quicktime']
         let imageURL = ""
         for (let j = 0; j < imgTypes.length; j++) {
             let tmpstr = 'data:' + imgTypes[j] + ';base64,'

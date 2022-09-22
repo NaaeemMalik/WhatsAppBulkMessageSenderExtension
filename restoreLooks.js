@@ -30,11 +30,15 @@ chrome.storage.local.get(null, function (data) {
 
     multipleNode(data.tCount - 1);
 
-    document.getElementById("firstInput").value = data.firstInput ? data.firstInput : "";
+    if (data.firstInput) document.getElementById("firstInput").value = data.firstInput;
+    else
+        chrome.storage.local.set({ "firstInput": document.getElementById("firstInput").value });
+
     textarea = [...document.getElementsByTagName('textarea')];
     textarea.forEach((element, index) => {
         if (index == 0) return;
-        element.value = data["textarea" + index] ? (data["textarea" + index]) : "";
+        if (data["textarea" + index]) element.value = data["textarea" + index];
+        else chrome.storage.local.set({ ["textarea" + index]: element.value });
     })
     image = [...document.querySelectorAll('label[name="file"]')];
     image.forEach((element, index) => {

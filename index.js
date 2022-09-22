@@ -12,20 +12,18 @@ function getBase64(file, callback, tmp, baseImages) {
 
 let baseImages = []
 function storeLooks() {
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, files: ['wa.js'] })
-    });
+    // chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    //     chrome.scripting.executeScript({ target: { tabId: tabs[0].id }, files: ['wa.js'] })
+    // });
     //send message to content script
     document.getElementById("btn").addEventListener("click", function () {
         console.log("btn clicked");
-        chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-            let tmp = { send: Math.random(239895) }
-            console.log(tmp);
-            chrome.storage.local.set(tmp)
-        });
+        let tmp = { send: Math.random(239895) }
+        console.log(tmp);
+        chrome.storage.local.set(tmp)
     })
 
-    //https://web.whatsapp.com/send?phone=923336508521&text&type=phone_number&app_absent=0
+    //https://web.whatsapp.com/send?phone=9233365021&text&type=phone_number&app_absent=0
 
     //saving text field value to local storage
     document.getElementById("firstInput").addEventListener("keyup", function (e) {
