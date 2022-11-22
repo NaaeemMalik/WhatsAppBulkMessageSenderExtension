@@ -4,10 +4,15 @@ Create WhatsApp Templates, Share single or multiple customizable messages to any
 first it will send all templates to first number then it will open next number and send him all templates.
 
 ✅ Messaging (no limits*)
+
 ✅ create multiple templates
+
 ✅ Image/Video Attachment Sending
+
 ✅ Caption text for Images/Videos
+
 ✅ Name personalized bulk Messaging, can also personalize Username/Password/Date
+
 ✅ Setting time gap between messages
 
 before clicking send button please verify that you have correctly entered everything and have checked Send This Message. if unchecked that specific template won't be sent. if you only want to use templates feature without username, password, date, you can write 3 commas and number you want to send messages to like ,,,+923345876 (not valid number example). all the numbers autofilled before in extension are not valid. don't enter a number that's not available on WhatsApp and checked your numbers before clicking send. you cant use whatsapp web while it's doing its work. Refresh WhatsApp page or it wont work after install. bugs can be reported here 
