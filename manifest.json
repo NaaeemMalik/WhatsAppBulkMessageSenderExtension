@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "WhatsAppBulk Message Free",
   "description": "WhatsApp Bulk Message Sender Extension",
-  "version": "1.0",
+  "version": "1.1",
 
   "action": {
     "default_icon": "logo128.png",

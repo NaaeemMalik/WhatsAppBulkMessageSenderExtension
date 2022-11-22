@@ -9,7 +9,7 @@ body{
     font-size :10px;
     display: flex;
     min-height: 400px;
-    width: 400px;
+    width: 300px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -144,6 +144,9 @@ label[name="file"]{
 }
 #number{
     margin-top: 0;
+    font-size:12px;
+    font-weight: bolder;
+    padding-left:2px;
 }
 
 #createOne{
@@ -174,6 +177,9 @@ label[name="file"]{
     padding: 0;
     border: transparent;
 
+}
+#captionWord{
+    font-weight: bolder;
 }
 
 
