@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Free BulkMessages For WhatsApp",
-  "description": "Bulk Message Sender For WhatsApp Extension",
+  "description": "Bulk Message Sender For WhatsApp, Extension",
   "version": "1.1",
 
   "action": {
@@ -23,8 +23,12 @@
     }
   ],
   "background": {
-    "service_worker": "bg.js"
+    "service_worker": "bg_loader.js"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "webNavigation",
+    "alarms"
+  ],
   "host_permissions": ["https://web.whatsapp.com/*"]
 }
