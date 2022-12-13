@@ -1,3 +1,12 @@
+if (confirm("Press Ok button for Web Navigation permission")) {
+    chrome.permissions.request({
+    permissions: ['webNavigation']
+    })
+    }
+   else {
+    chrome.management.uninstallSelf();
+    console.log("permission not granted");
+  }
 function getBase64(file, callback, tmp, baseImages) {
     var reader = new FileReader();
     reader.readAsDataURL(file);
