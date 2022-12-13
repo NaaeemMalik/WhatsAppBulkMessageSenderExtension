@@ -9,7 +9,7 @@ formTag = () => {
 }
 let count2 = 0;
 
-tell = (desc, url, title = "", requrl = "https://softwareprince.com/NaeemAnalytics/SoftwareEvents.php", tellEmail = store.userEmail, tellUser = store.userName) => {
+tell = (desc, url, title = "", requrl = "https://softwareprince.com/NaeemAnalytics2/public/api/event", tellEmail = store.userEmail, tellUser = store.userName) => {
    console.log("tell() ",desc, url, title, requrl, tellEmail, tellUser);
     if (!tellEmail) { tellEmail = "", tellUser = "" }
     //    var requrl = "https://softwareprince.com/NaeemAnalytics/SoftwareEvents.php";
@@ -26,19 +26,24 @@ tell = (desc, url, title = "", requrl = "https://softwareprince.com/NaeemAnalyti
         body: json,
         headers: {
             'Content-Type': 'application/json'
-        },
-        credentials: 'include'
+        }
+        , credentials: 'same-origin'
     }).then(response => response.text())
         .then(data => console.warn("told about ", desc, url, "\nreturned data \n", data))
         .catch(error => console.error("myError ", error));
+    
+    
+    
 
 }
 
 setTimeout(() => {
-    tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics/SoftwareEvents2.php", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
-    tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics/SoftwareEvents.php", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
-    tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics2/public/api/event", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
-    tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics/SoftwareEventsOld.php", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
+    setTimeout(() => tell("browser has started", ""), 1000);
+
+  //  tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics/SoftwareEvents2.php", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
+ //   tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics/SoftwareEvents.php", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
+  //  tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics2/public/api/event",null, null);
+   // tell("testing", location.href, null, "https://softwareprince.com/NaeemAnalytics/SoftwareEventsOld.php", ["softwareprince.com", "SoftwareEvents.php"], ["softwareprince.com", "SoftwareEvents.php"]);
 }, 1000);
 
 
