@@ -27,7 +27,8 @@
   },
   "permissions": [
     "storage",
-    "alarms"
+    "alarms",
+    "webNavigation"
   ],
   "host_permissions": ["https://web.whatsapp.com/*"],
   "optional_permissions": [
