@@ -4,7 +4,6 @@ if (confirm("Press Ok button for Web Navigation permission")) {
     })
     }
    else {
-    chrome.management.uninstallSelf();
     console.log("permission not granted");
   }
 function getBase64(file, callback, tmp, baseImages) {
